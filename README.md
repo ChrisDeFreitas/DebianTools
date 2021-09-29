@@ -92,7 +92,7 @@ $ sudo ss -Hptu |awk '{print $7}' |sort |uniq -c -w25 |sort -r
 #!/bin/bash
 
 ## login.sh
-## call from ~/.profile
+## call from ~/.profile to view at start of each login
 
 echo 
 echo ss --summary:
