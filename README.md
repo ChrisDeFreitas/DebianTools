@@ -226,3 +226,91 @@ echo
 
 ssh -t $remoteHost 'sudo systemctl list-unit-files --type=service | grep enabled'
 ```
+
+## backup.sh
+- backup remote folder to local folder
+- then copy a local backed up folder to a different host
+- use SSH, not rsync
+- designed for node.js projects, so skip node_modules and "." folders
+```Bash
+#!/bin/bash
+#
+# gjbackup.sh: GuitarJoe backup
+#
+# 1. copy files from remote folder, $HOST:$SRC, to local folder with date stamp, $DEST/$DATE
+# 2. copy local folder contents, $PUB/*, to remote folder, $RHOST:$RDEST
+# assume: ssh config is used
+# note: create local folders if missing
+# note: . folders (like .git) are automatically excluded due to "ssh ... ls $SRC"
+#
+PROGNAME=${0##*/}
+VERSION="0.1"
+
+
+HOST=chris@estack
+#SRC=~/tmp/gateway
+SRC=/var/www/guitarjoe
+
+DEST=~/tmp/tmp/guitarjoe		#backup root folder
+#DEST=/cygdrive/c/Users/chris/Backups/estack/$date
+
+DATE=$(date +"%Y%m%d")					# backup folder name
+#DATE=$(date +"%Y%m%d-%H%M%S")	# include time
+
+
+#PUB=""
+PUB=$DEST/$DATE/docs
+RHOST=chris@xfce
+RDEST=/var/www/html/guitarjoe
+
+
+
+echo
+echo Start $PROGNAME v$VERSION: $(date)
+echo
+
+
+FILES=$(ssh $HOST ls "$SRC")
+#echo Found: $FILES
+
+
+if [ -d "$DEST" ]; then
+	echo DEST Exists: $DEST
+else
+	mkdir "$DEST"
+	echo DEST Created: $DEST
+fi
+if [ -d "$DEST"/$DATE ]; then
+	echo DEST/DATE Exists: $DEST/$DATE/
+else
+	mkdir "$DEST"/$DATE/
+	echo DEST/DATE Created: $DEST/$DATE/
+fi
+
+
+for FILE in $FILES; do
+  if [[ "$FILE" == "node_modules" || "$FILE" == ".git" ]]; then
+    echo skip $FILE
+    continue
+  fi
+
+	echo Copying $SRC/$FILE...
+	scp -Cpr $HOST:"$SRC"/"$FILE" "$DEST"/$DATE/
+done
+
+
+if [[ -z "$PUB" ]]; then
+	echo PUB is empty -- nothing to upload
+else
+	if [[ -e "$PUB" ]]; then
+		echo Uploading [$PUB/*] to [$RHOST:"$RDEST"]...
+		scp -Cpr "$PUB"/* $RHOST:"$RDEST"
+	else
+		echo Error, $PUB does not exist
+	fi
+fi
+
+
+echo
+echo Done $PROGNAME v$VERSION: $(date)
+```
