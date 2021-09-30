@@ -230,12 +230,13 @@ ssh -t $remoteHost 'sudo systemctl list-unit-files --type=service | grep enabled
 ## backup.sh
 - backup remote folder to local folder
 - then copy a local backed up folder to a different host
+- each backup stored in date stamped folder
 - use SSH, not rsync
 - designed for node.js projects, so skip node_modules and "." folders
 ```Bash
 #!/bin/bash
 #
-# gjbackup.sh: GuitarJoe backup
+# backup.sh:
 #
 # 1. copy files from remote folder, $HOST:$SRC, to local folder with date stamp, $DEST/$DATE
 # 2. copy local folder contents, $PUB/*, to remote folder, $RHOST:$RDEST
@@ -251,14 +252,14 @@ HOST=chris@estack
 #SRC=~/tmp/gateway
 SRC=/var/www/guitarjoe
 
-DEST=~/tmp/tmp/guitarjoe		#backup root folder
-#DEST=/cygdrive/c/Users/chris/Backups/estack/$date
+DEST=~/tmp/tmp/guitarjoe        # backup root folder
+#DEST=/cygdrive/c/Users/chris/Backups/estack/
 
-DATE=$(date +"%Y%m%d")					# backup folder name
-#DATE=$(date +"%Y%m%d-%H%M%S")	# include time
+DATE=$(date +"%Y%m%d")          # backup folder name
+#DATE=$(date +"%Y%m%d-%H%M%S")  # include time
 
 
-#PUB=""
+#PUB=""                         #if empty, no upload performed
 PUB=$DEST/$DATE/docs
 RHOST=chris@xfce
 RDEST=/var/www/html/guitarjoe
