@@ -231,39 +231,37 @@ ssh -t $remoteHost 'sudo systemctl list-unit-files --type=service | grep enabled
 - backup remote folder to local folder
 - then copy a local backed up folder to a different host
 - each backup stored in date stamped folder
-- use SSH, not rsync
-- designed for node.js projects, so skip node_modules and "." folders
+- use SSH, not rsync -- rsync will be faster with large transfers but may require install
+- designed for node.js projects, so skips node_modules and "." folders
 ```Bash
 #!/bin/bash
 #
 # backup.sh:
 #
-# 1. copy files from remote folder, $HOST:$SRC, to local folder with date stamp, $DEST/$DATE
-# 2. copy local folder contents, $PUB/*, to remote folder, $RHOST:$RDEST
+# 1. copy files from source computer, $SHOST:$SPATH, to date stamped local folder, $LPATH/$LDIR
+# 2. copy local folder contents, $LPUB/*, to remote folder, $RHOST:$RPATH
 # assume: ssh config is used
-# note: create local folders if missing
-# note: . folders (like .git) are automatically excluded due to "ssh ... ls $SRC"
+# note: creates local folders if missing
+# note: "." folders (like .git) are automatically excluded due to "ssh ... ls $SPATH"
+# note: node_modules folder is filtered out of $SPATH, but may exist in a subfolder
 #
 PROGNAME=${0##*/}
 VERSION="0.1"
 
 
-HOST=chris@estack
-#SRC=~/tmp/gateway
-SRC=/var/www/guitarjoe
+SHOST=chris@estack							# source host
+SPATH=/var/www/guitarjoe
 
-DEST=~/tmp/tmp/guitarjoe        # backup root folder
-#DEST=/cygdrive/c/Users/chris/Backups/estack/
+LPATH=/cygdrive/f/backups/guitarjoe   #local backup folder
 
-DATE=$(date +"%Y%m%d")          # backup folder name
-#DATE=$(date +"%Y%m%d-%H%M%S")  # include time
+LDIR=$(date +"%Y%m%d")          # local backup folder name
+#LDIR=$(date +"%Y%m%d-%H%M%S")	# include time
 
+LPUB=$LPATH/$LDIR/docs          # folder to push to remote
+#LPUB=""                        # if empty, no upload performed
 
-#PUB=""                         #if empty, no upload performed
-PUB=$DEST/$DATE/docs
-RHOST=chris@xfce
-RDEST=/var/www/html/guitarjoe
-
+RHOST=chris@xfce                #remote host
+RPATH=/var/www/html/guitarjoe
 
 
 echo
@@ -271,21 +269,21 @@ echo Start $PROGNAME v$VERSION: $(date)
 echo
 
 
-FILES=$(ssh $HOST ls "$SRC")
+FILES=$(ssh $SHOST ls "$SPATH")
 #echo Found: $FILES
 
 
-if [ -d "$DEST" ]; then
-	echo DEST Exists: $DEST
+if [ -d "$LPATH" ]; then
+	echo LPATH Exists: $LPATH
 else
-	mkdir "$DEST"
-	echo DEST Created: $DEST
+	mkdir "$LPATH"
+	echo LPATH Created: $LPATH
 fi
-if [ -d "$DEST"/$DATE ]; then
-	echo DEST/DATE Exists: $DEST/$DATE/
+if [ -d "$LPATH"/$LDIR ]; then
+	echo LPATH/LDIR Exists: $LPATH/$LDIR/
 else
-	mkdir "$DEST"/$DATE/
-	echo DEST/DATE Created: $DEST/$DATE/
+	mkdir "$LPATH"/$LDIR/
+	echo LPATH/LDIR Created: $LPATH/$LDIR/
 fi
 
 
@@ -295,19 +293,20 @@ for FILE in $FILES; do
     continue
   fi
 
-	echo Copying $SRC/$FILE...
-	scp -Cpr $HOST:"$SRC"/"$FILE" "$DEST"/$DATE/
+	echo Copying $SPATH/$FILE...
+	scp -Cpr $SHOST:"$SPATH"/"$FILE" "$LPATH"/$LDIR/
 done
 
 
-if [[ -z "$PUB" ]]; then
-	echo PUB is empty -- nothing to upload
+echo
+if [[ -z "$LPUB" ]]; then
+	echo LPUB is empty -- nothing to upload
 else
-	if [[ -e "$PUB" ]]; then
-		echo Uploading [$PUB/*] to [$RHOST:"$RDEST"]...
-		scp -Cpr "$PUB"/* $RHOST:"$RDEST"
+	if [[ -e "$LPUB" ]]; then
+		echo Uploading [$LPUB/*] to [$RHOST:"$RPATH"]...
+		scp -Cpr "$LPUB"/* $RHOST:"$RPATH"
 	else
-		echo Error, $PUB does not exist
+		echo Error, $LPUB does not exist
 	fi
 fi
 
