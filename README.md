@@ -314,3 +314,41 @@ fi
 echo
 echo Done $PROGNAME v$VERSION: $(date)
 ```
+
+## nmap
+- https://nmap.org/book/man.html
+```Bash
+$ sudo apt install nmap
+
+$ sudo nmap 192.168.0.1     # scan 1000 most common ports in nmap database
+$ sudo nmap -p [-1024] 192.168.0.1     # scan ports <= 1024
+$ sudo nmap -p- 192.168.0.1     # quick scan all ports, 1 - 65535
+$ sudo nmap -A -p- 192.168.0.1  # scan of all ports, return port details
+
+Options  
+-A    scan for OS(-O), version(-sV), scripting(-sC) and traceroute (--traceroute)
+
+--exclude-ports <port ranges> 
+
+-h    display help
+
+--iflist    list interfaces and routes
+
+-oN <filespec>    normal output to file
+-oX <filespec>    XML output to file
+
+--open    show only open (or possibly open) ports
+
+-p <port ranges>    scan specified ports; may also specified by name in nmap-services list
+-p-   scan ports from 1 through 65535
+-p U:53,111,137,T:21-25,80,139,8080   scan UDP ports 53, 111,and 137, as well as the listed TCP ports
+-p [-1024]    scan all ports in nmap-services <= 1024
+
+--stats-every <time interval>    print periodic timing stats per interval
+
+-v   verbose mode
+-v <level>   
+
+-V    display version
+
+```
