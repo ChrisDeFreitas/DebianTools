@@ -43,13 +43,21 @@ $ sudo systemctl list-unit-files --type=service | grep enabled
 # list time spent initializing each process
 systemd-analyze  blame
 # analyze unit file for errors
-systemd-analyze verify [systemd unit filename]
+systemd-analyze verify SERVICE-FILENAME
 # analyzes the security and sandboxing settings of service
-systemd-analyze security [UNIT...]
+systemd-analyze security SERVICENAME
 
 #Disable service
 $ sudo systemctl stop SERVICENAME
 $ sudo systemctl disable SERVICENAME
+
+# point unit file to /dev/null as stopped and disabled services may be started
+# see: http://0pointer.de/blog/projects/three-levels-of-off
+# "...how do we turn them on again? ... 
+#  use systemctl start to undo systemctl stop. 
+#  Use systemctl enable to undo systemctl disable
+#  and use rm to undo ln."
+systemctl mask SERVICENAME
 ```  
 
 ```Bash
