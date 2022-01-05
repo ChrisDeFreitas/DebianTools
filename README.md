@@ -70,6 +70,9 @@ $ ss -s
 # all listening internet ports with pid
 $ sudo ss -ltup 
 
+# all connected ports
+$ sudo ss -t
+
 # tcp connections by port number
 #   dport = destination/remote port
 #   sport = source/local port
