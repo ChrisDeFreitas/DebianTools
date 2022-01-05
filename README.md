@@ -40,6 +40,12 @@ $ sudo systemctl --type=service
 $ sudo systemctl --type=service --state=active
 # list startup services only (https://www.linux.com/topic/desktop/cleaning-your-linux-startup-process/)
 $ sudo systemctl list-unit-files --type=service | grep enabled
+# list time spent initializing each process
+systemd-analyze  blame
+# analyze unit file for errors
+systemd-analyze verify [systemd unit filename]
+# analyzes the security and sandboxing settings of service
+systemd-analyze security [UNIT...]
 
 #Disable service
 $ sudo systemctl stop SERVICENAME
