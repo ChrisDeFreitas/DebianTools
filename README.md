@@ -46,6 +46,8 @@ systemd-analyze  blame
 systemd-analyze verify SERVICE-FILENAME
 # analyzes the security and sandboxing settings of service
 systemd-analyze security SERVICENAME
+# 
+sudo systemctl list-dependencies SERVICENAME --reverse
 
 #Disable service
 $ sudo systemctl stop SERVICENAME
