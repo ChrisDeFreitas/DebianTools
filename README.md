@@ -87,7 +87,9 @@ $ sudo apt full-upgrade   # install candidate version of installed packages whil
 
 $ sudo apt install foo 	# install candidate version of "foo" package with its dependencies 
 $ sudo apt remove foo   # remove "foo" package while leaving its configuration files 
+$ sudo apt-get remove --purge foo-\*    # remove all packages beginning with foo-
 $ sudo apt purge foo    # purge "foo" package with its configuration files 
+
 
 $ apt show foo     # display package details of "foo" 
 $ apt list --installed | grep foo   # list packages based on name
