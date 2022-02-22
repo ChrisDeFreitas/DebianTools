@@ -34,35 +34,6 @@ $ sudo last -30 -F -i | grep -v userName
 ```
 
 ```Bash
-#Status of all services
-$ sudo systemctl  
-$ sudo systemctl --type=service 
-$ sudo systemctl --type=service --state=active
-# list startup services only (https://www.linux.com/topic/desktop/cleaning-your-linux-startup-process/)
-$ sudo systemctl list-unit-files --type=service | grep enabled
-# list time spent initializing each process
-systemd-analyze  blame
-# analyze unit file for errors
-systemd-analyze verify SERVICE-FILENAME
-# analyzes the security and sandboxing settings of service
-systemd-analyze security SERVICENAME
-# 
-sudo systemctl list-dependencies SERVICENAME --reverse
-
-#Disable service
-$ sudo systemctl stop SERVICENAME
-$ sudo systemctl disable SERVICENAME
-
-# point unit file to /dev/null as stopped and disabled services may be started
-# see: http://0pointer.de/blog/projects/three-levels-of-off
-# "...how do we turn them on again? ... 
-#  use systemctl start to undo systemctl stop. 
-#  Use systemctl enable to undo systemctl disable
-#  and use rm to undo ln."
-systemctl mask SERVICENAME
-```  
-
-```Bash
 #Service ports
 # requires: $ sudo apt install net-tools
 # better to use "ss" because pre-installed in Debian
@@ -174,6 +145,41 @@ Options
 
 ```
 
+## systemctl  
+- https://man7.org/linux/man-pages/man1/systemctl.1.html
+- http://0pointer.de/blog/projects/three-levels-of-off
+```Bash
+#Status of all services
+$ sudo systemctl  
+$ sudo systemctl --type=service 
+$ sudo systemctl --type=service --state=active
+# list startup services only (https://www.linux.com/topic/desktop/cleaning-your-linux-startup-process/)
+$ sudo systemctl list-unit-files --type=service | grep enabled
+# list time spent initializing each process
+systemd-analyze  blame
+# analyze unit file for errors
+systemd-analyze verify SERVICE-FILENAME
+# analyzes the security and sandboxing settings of service
+systemd-analyze security SERVICENAME
+# 
+sudo systemctl list-dependencies SERVICENAME --reverse
+
+#Disable service
+$ sudo systemctl stop SERVICENAME
+$ sudo systemctl disable SERVICENAME
+
+# Resource consuming services
+systemctl list-sockets
+systemctl list-timers 
+
+# point unit file to /dev/null as stopped and disabled services may be started
+# see: http://0pointer.de/blog/projects/three-levels-of-off
+# "...how do we turn them on again? ... 
+#  use systemctl start to undo systemctl stop. 
+#  Use systemctl enable to undo systemctl disable
+#  and use rm to undo ln."
+systemctl mask SERVICENAME
+```  
 # Scripts
 
 ## login.sh
