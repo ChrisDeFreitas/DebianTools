@@ -5,7 +5,7 @@ This is warehouse of scripts I use on a regular basis.  Feel free to use as you 
 The initial load is copied from https://github.com/ChrisDeFreitas/ElasticStack/.  I'll be adding as needs arise.
 
 
-# Commands and Scripts
+# Commands
 
 ```Bash
 # free memory	
@@ -105,6 +105,76 @@ $ sudo ss -tup  |grep pid=5992  |wc -l
 # list processes by number of established tcp connections
 $ sudo ss -Hptu |awk '{print $7}' |sort |uniq -c -w25 |sort -r
 ```
+## apt
+- https://www.debian.org/doc/manuals/debian-reference/ch02.en.html
+- https://wiki.debian.org/PackageManagementTools
+```Bash
+$ sudo apt update   # update package archive metadata 
+$ apt list --upgradable
+$ sudo apt upgrade  # install candidate version of installed packages without removing any other packages
+$ sudo apt full-upgrade   # install candidate version of installed packages while removing other packages if needed
+
+$ sudo apt install foo 	# install candidate version of "foo" package with its dependencies 
+$ sudo apt remove foo   # remove "foo" package while leaving its configuration files 
+$ sudo apt purge foo    # purge "foo" package with its configuration files 
+
+$ apt show foo     # display package details of "foo" 
+$ apt list --installed | grep foo   # list packages based on name
+$ apt list --all-versions foo   # 
+$ apt search regex # search package descriptions for regex
+$ aptitude search '~i!~M' # list manually installed packages 
+
+$ apt depends foo      # list: predepends/depends/Conflicts/Breaks/Recommends/Suggests/Replaces
+$ apt rdepends foo     # list recursive package dependencies as above
+$ sudo apt-mark hold foo    # do not upgrade until unhold called on package
+$ sudo apt-mark unhold foo  # release unhold
+$ sudo aptitude why regex     # explain the reason why regex matching packages should be installed 
+$ sudo aptitude why-not regex # explain the reason why regex matching packages can not be installed 
+
+$ sudo apt autoremove   # remove auto-installed packages which are no longer required 
+$ sudo apt clean        # clear out the local repository of retrieved package files completely 
+$ sudo apt autoclean    # clear out the local repository of retrieved package files for outdated packages 
+```
+
+## nmap
+- https://nmap.org/book/man.html
+```Bash
+$ sudo apt install nmap
+
+$ sudo nmap 192.168.0.1     # scan 1000 most common ports in nmap database
+$ sudo nmap -p [-1024] 192.168.0.1     # scan ports <= 1024
+$ sudo nmap -p- 192.168.0.1     # quick scan all ports, 1 - 65535
+$ sudo nmap -A -p- 192.168.0.1  # scan of all ports, return port details
+
+Options  
+-A    scan for OS(-O), version(-sV), scripting(-sC) and traceroute (--traceroute)
+
+--exclude-ports <port ranges> 
+
+-h    display help
+
+--iflist    list interfaces and routes
+
+-oN <filespec>    normal output to file
+-oX <filespec>    XML output to file
+
+--open    show only open (or possibly open) ports
+
+-p <port ranges>    scan specified ports; may also specified by name in nmap-services list
+-p-   scan ports from 1 through 65535
+-p U:53,111,137,T:21-25,80,139,8080   scan UDP ports 53, 111,and 137, as well as the listed TCP ports
+-p [-1024]    scan all ports in nmap-services <= 1024
+
+--stats-every <time interval>    print periodic timing stats per interval
+
+-v   verbose mode
+-v <level>   
+
+-V    display version
+
+```
+
+# Scripts
 
 ## login.sh
 ```Bash
@@ -334,40 +404,3 @@ echo
 echo Done $PROGNAME v$VERSION: $(date)
 ```
 
-## nmap
-- https://nmap.org/book/man.html
-```Bash
-$ sudo apt install nmap
-
-$ sudo nmap 192.168.0.1     # scan 1000 most common ports in nmap database
-$ sudo nmap -p [-1024] 192.168.0.1     # scan ports <= 1024
-$ sudo nmap -p- 192.168.0.1     # quick scan all ports, 1 - 65535
-$ sudo nmap -A -p- 192.168.0.1  # scan of all ports, return port details
-
-Options  
--A    scan for OS(-O), version(-sV), scripting(-sC) and traceroute (--traceroute)
-
---exclude-ports <port ranges> 
-
--h    display help
-
---iflist    list interfaces and routes
-
--oN <filespec>    normal output to file
--oX <filespec>    XML output to file
-
---open    show only open (or possibly open) ports
-
--p <port ranges>    scan specified ports; may also specified by name in nmap-services list
--p-   scan ports from 1 through 65535
--p U:53,111,137,T:21-25,80,139,8080   scan UDP ports 53, 111,and 137, as well as the listed TCP ports
--p [-1024]    scan all ports in nmap-services <= 1024
-
---stats-every <time interval>    print periodic timing stats per interval
-
--v   verbose mode
--v <level>   
-
--V    display version
-
-```
